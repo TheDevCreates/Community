@@ -1,0 +1,29 @@
+{
+  "name": "@devcreates/template",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./db": {
+      "import": "./src/db/index.ts",
+      "require": "./dist/db/index.cjs.js"
+    }
+  },
+  "scripts": {
+    "build": "npm run switch:prod && pnpm cleanup && tsc --project tsconfig.server.json && tsc-alias -p tsconfig.server.json",
+    "switch:dev": "node scripts/switchToSrc.js",
+    "switch:prod": "node scripts/switchToDist.js",
+    "dev": "pnpm cleanup && pnpm esbuild && tsc --emitDeclarationOnly --outDir dist -p tsconfig.server.json",
+    "esbuild": "tsx ./esbuild.config.ts && tsc --project tsconfig.server.json --emitDeclarationOnly",
+    "typecheck": "tsc --noEmit",
+    "cleanup": "node -e \"require('fs').rmSync('./dist', { recursive: true, force: true });\""
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.2",
+    "esbuild-plugin-alias": "^0.2.1",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2"
+  }
+}
