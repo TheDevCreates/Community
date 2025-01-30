@@ -16,7 +16,7 @@ build({
   format: "esm",
   plugins: [
     alias({
-      "@lophura/server": path.resolve(__dirname, "src"),
+      "@devcreates/template": path.resolve(__dirname, "src"),
     }),
   ],
   packages: "external",

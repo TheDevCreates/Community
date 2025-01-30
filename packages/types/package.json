@@ -1,0 +1,20 @@
+{
+  "name": "@devcreates/types",
+  "version": "1.0.0",
+  "description": "",
+  "types": "index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": "./index.d.ts",
+    "./database": "./database.d.ts"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2"
+  }
+}
