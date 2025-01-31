@@ -20,9 +20,9 @@ export const createClient = async (request: NextRequest) => {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          // Set the domain available to all andyspacecraft.xyz domain and subdomains
+          // Set the domain available to all devcreates.lol domain and subdomains
           cookiesToSet = cookiesToSet.map((cookie) => {
-            cookie.options.domain = "andyspacecraft.xyz";
+            cookie.options.domain = "devcreates.lol";
             return cookie;
           });
 
