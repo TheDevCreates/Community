@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     provider: "discord",
     options: {
       redirectTo: `${process.env.ORIGIN_URL ?? "http://localhost:3000"}/auth/callback`,
-      scopes: "guilds.join role_connections.write",
+      // scopes: "guilds.join role_connections.write",
     },
   });
 

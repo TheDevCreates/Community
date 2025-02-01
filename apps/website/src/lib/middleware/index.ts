@@ -1,7 +1,9 @@
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 
-const middlewares = [bypassDevelopment];
+import authHandler from "./auth";
+
+const middlewares = [authHandler, bypassDevelopment];
 
 export interface MiddlewareSupabaseClient {
   supabase: SupabaseClient;

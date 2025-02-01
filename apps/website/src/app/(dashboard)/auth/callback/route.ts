@@ -1,8 +1,10 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { type CookieOptions, createServerClient } from "@supabase/ssr";
+import { type CookieOptions } from "@supabase/ssr";
 
 import { createClient } from "@/lib/supabase/server";
+import { AuthTokenResponse, User } from "@supabase/supabase-js";
+import { createServiceServer } from "@/lib/supabase/service-server";
 
 // import Client from "@devcreaes/discord";
 
@@ -40,6 +42,8 @@ export async function GET(request: Request) {
     );
   }
 
+  await createDatabaseAccount(session.data);
+
   // # DevCreates & DC Community haven't done inviting the bot to the server yet
   // try {
   //   const discordClient = new Client(process.env.DISCORD_TOKEN!);
@@ -54,4 +58,24 @@ export async function GET(request: Request) {
   return Response.redirect(
     `${process.env.ORIGIN_URL ?? "http://localhost:3000"}${next}`
   );
+}
+
+async function createDatabaseAccount(session: AuthTokenResponse["data"]) {
+  const supabase = createServiceServer();
+
+  const { data: user } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", session.user!.id)
+    .single();
+
+  if (user) return;
+
+  console.log("Creating new user in database");
+
+  await supabase.from("users").insert([
+    {
+      id: session.user!.id,
+    },
+  ]);
 }
