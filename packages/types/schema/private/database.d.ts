@@ -7,26 +7,20 @@ export type Json =
   | Json[]
 
 export type Database = {
-  public: {
+  private: {
     Tables: {
-      users: {
+      github_states: {
         Row: {
-          created_at: string
-          github: Json | null
           id: string
-          invited_at: string | null
+          state: string
         }
         Insert: {
-          created_at?: string
-          github?: Json | null
-          id: string
-          invited_at?: string | null
+          id?: string
+          state?: string
         }
         Update: {
-          created_at?: string
-          github?: Json | null
           id?: string
-          invited_at?: string | null
+          state?: string
         }
         Relationships: []
       }

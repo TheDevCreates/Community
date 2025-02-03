@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const auth = await supabase.auth.signInWithOAuth({
     provider: "discord",
     options: {
-      redirectTo: `${process.env.ORIGIN_URL ?? "http://localhost:3000"}/auth/callback`,
+      redirectTo: `${process.env.ORIGIN_URL ?? "http://localhost:3000"}/auth/popup/discord/callback`,
       // scopes: "guilds.join role_connections.write",
     },
   });

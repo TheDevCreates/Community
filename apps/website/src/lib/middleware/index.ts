@@ -1,20 +1,28 @@
-import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
+import type {
+  Session,
+  SupabaseClient,
+  User as SupabaseUser,
+} from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
+import User from "@devcreates/types/schema/public/users";
 
 import authHandler from "./auth";
+import { ExtendedUser } from "../types/user";
+import { Database } from "@devcreates/types/database";
 
 const middlewares = [authHandler, bypassDevelopment];
 
 export interface MiddlewareSupabaseClient {
   supabase: SupabaseClient;
   session: Session | null;
-  user: User | null;
+  user: SupabaseUser | null;
+  account: User | null;
 }
 
 export default async function middleware(
   req: NextRequest,
   res: NextResponse,
-  supabase: SupabaseClient
+  supabase: SupabaseClient<Database>
 ) {
   // fetch session
   const {
@@ -26,11 +34,17 @@ export default async function middleware(
     data: { user },
   } = await supabase.auth.getUser();
 
+  // fetch account
+  const { data: account } = user
+    ? await supabase.from("users").select("*").eq("id", user.id).single()
+    : { data: null };
+
   // Extend supabase with session and user
   const data: MiddlewareSupabaseClient = {
     supabase,
     session,
     user,
+    account,
   };
 
   // Load individuals middleware

@@ -6,7 +6,7 @@ export default async function authHandler(
   res: NextResponse,
   supa_data: MiddlewareSupabaseClient
 ) {
-  const { user } = supa_data;
+  const { user, account } = supa_data;
 
   if (!user) {
     // rewrite to /home if "/" is requested
@@ -22,6 +22,7 @@ export default async function authHandler(
     user &&
     (req.nextUrl.pathname == "/auth" ||
       req.nextUrl.pathname.startsWith("/auth/")) &&
+    !req.nextUrl.pathname.startsWith("/auth/popup/github") &&
     req.nextUrl.pathname !== "/auth/popup/success" &&
     req.nextUrl.pathname !== "/auth/logout"
   ) {
@@ -29,6 +30,16 @@ export default async function authHandler(
       return NextResponse.next();
     }
 
+    const nextUrl = req.nextUrl.clone();
+    nextUrl.pathname = "/";
+    return NextResponse.redirect(nextUrl);
+  }
+
+  // Restrict logged in users that already have a Github connection
+  if (
+    account?.github &&
+    req.nextUrl.pathname.startsWith("/auth/popup/github")
+  ) {
     const nextUrl = req.nextUrl.clone();
     nextUrl.pathname = "/";
     return NextResponse.redirect(nextUrl);
