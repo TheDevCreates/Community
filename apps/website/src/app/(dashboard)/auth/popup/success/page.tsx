@@ -32,7 +32,7 @@ export default function Auth() {
             </div>
             <CardTitle className="text-center">congrats!1!!! 🎉🎉🎉</CardTitle>
             <CardDescription className="text-center">
-              your discrod accoutn has been registered!1
+              your accoutn has been registered!1
             </CardDescription>
           </CardHeader>
           <CardContent>

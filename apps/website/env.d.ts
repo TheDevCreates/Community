@@ -6,8 +6,9 @@ declare global {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
       SUPABASE_SERVICE_KEY: string;
 
-      GITHUB_CLIENT_ID: string;
-      GITHUB_CLIENT_SECRET: string;
+      GITHUB_AUTH_CLIENT_ID: string;
+      GITHUB_AUTH_CLIENT_SECRET: string;
+      GITHUB_API_KEY: string;
 
       ORIGIN_URL: string;
     }

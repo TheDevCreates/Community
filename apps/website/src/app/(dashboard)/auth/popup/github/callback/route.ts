@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid";
+import { Octokit } from "@octokit/core";
 
 import { createClient } from "@/lib/supabase/server";
 import { Database } from "@devcreates/types/schema/private/database";
@@ -45,8 +45,8 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        client_id: process.env.GITHUB_CLIENT_ID,
-        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        client_id: process.env.GITHUB_AUTH_CLIENT_ID,
+        client_secret: process.env.GITHUB_AUTH_CLIENT_SECRET,
         code,
       }),
     }
@@ -74,6 +74,31 @@ export async function GET(request: NextRequest) {
     .update({ github: ghUser })
     .match({ id: user.id });
 
+  // Check if the user is already a member of the GitHub organization
+  const octokit = new Octokit({
+    auth: process.env.GITHUB_API_KEY,
+  });
+
+  const orgMembership = await octokit
+    .request("GET /orgs/{org}/memberships/{username}", {
+      org: "TheDevCreates-Public",
+      username: ghUser.login,
+    })
+    .catch(() => null);
+
+  if (!orgMembership || orgMembership.data.state !== "active") {
+    // Invite the user to the GitHub organization
+    await octokit.request("POST /orgs/{org}/invitations", {
+      org: "TheDevCreates-Public",
+      invitee_id: ghUser.id,
+      role: "direct_member",
+    });
+  } else {
+    // Add search parameter if the user is already a member
+    nextUrl.searchParams.set("github_invite", "already_on_org");
+  }
+
+  // Redirect to the success page
   nextUrl.pathname = "/auth/popup/success";
 
   return NextResponse.redirect(nextUrl);
