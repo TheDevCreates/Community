@@ -1,7 +1,16 @@
 "use client";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function GithubAuth5xx() {
+  return (
+    <Suspense>
+      <ErrorPage />
+    </Suspense>
+  );
+}
+
+function ErrorPage() {
   const searchParams = useSearchParams();
 
   return (
