@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
 import { signIn } from "@/lib/auth";
 
 import { cookies } from "next/headers";
