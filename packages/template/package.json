@@ -2,13 +2,16 @@
   "name": "@devcreates/template",
   "version": "1.0.0",
   "private": true,
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./db": {
-      "import": "./src/db/index.ts",
-      "require": "./dist/db/index.cjs.js"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./*": {
+      "import": "./dist/*",
+      "require": "./dist/*.cjs"
     }
   },
   "scripts": {
