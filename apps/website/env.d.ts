@@ -10,6 +10,10 @@ declare global {
       GITHUB_AUTH_CLIENT_SECRET: string;
       GITHUB_API_KEY: string;
 
+      AUTH_SECRET: string;
+      AUTH_DISCORD_ID: string;
+      AUTH_DISCORD_SECRET: string;
+
       ORIGIN_URL: string;
     }
   }

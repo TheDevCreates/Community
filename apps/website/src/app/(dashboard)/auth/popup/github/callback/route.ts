@@ -1,10 +1,12 @@
 import { Octokit } from "@octokit/core";
+import { Endpoints, GetResponseTypeFromEndpointMethod } from "@octokit/types";
 
-import { createClient } from "@/lib/supabase/server";
-import { Database } from "@devcreates/types/schema/private/database";
+import { createServiceServer } from "@/lib/supabase/service-server";
 
 import { cookies } from "next/headers";
-import { type NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse, userAgent } from "next/server";
+
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -21,17 +23,15 @@ type GithubResponse =
     };
 
 export async function GET(request: NextRequest) {
-  const supabase = createClient(cookies());
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const session = await auth();
+  if (!session) {
     const nextUrl = request.nextUrl.clone();
     nextUrl.pathname = "/auth";
     nextUrl.searchParams.set("required", "true");
     return NextResponse.redirect(nextUrl);
   }
+
+  const supabase = createServiceServer();
 
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
@@ -62,17 +62,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(nextUrl);
   }
 
-  const ghUser = await fetch("https://api.github.com/user", {
-    headers: {
-      Accept: "application/json",
-      Authorization: `${accessToken.token_type} ${accessToken.access_token}`,
-    },
-  }).then((res) => res.json());
+  const ghUser: Endpoints["GET /user"]["response"]["data"] = await fetch(
+    "https://api.github.com/user",
+    {
+      headers: {
+        Accept: "application/json",
+        Authorization: `${accessToken.token_type} ${accessToken.access_token}`,
+      },
+    }
+  ).then((res) => res.json());
 
-  await supabase
-    .from("users")
-    .update({ github: ghUser })
-    .match({ id: user.id });
+  console.log(
+    await supabase.from("github_connection").insert({
+      id: session.user.id!,
+      github_id: ghUser.id.toString(),
+      username: ghUser.login,
+      avatar_url: ghUser.avatar_url,
+      display_name: ghUser.name!,
+    })
+  );
 
   // Check if the user is already a member of the GitHub organization
   const octokit = new Octokit({

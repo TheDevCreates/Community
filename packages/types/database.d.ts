@@ -7,26 +7,238 @@ export type Json =
   | Json[]
 
 export type Database = {
-  public: {
+  next_auth: {
     Tables: {
-      users: {
+      accounts: {
         Row: {
-          created_at: string
-          github: Json | null
+          access_token: string | null
+          expires_at: number | null
           id: string
-          invited_at: string | null
+          id_token: string | null
+          oauth_token: string | null
+          oauth_token_secret: string | null
+          provider: string
+          providerAccountId: string
+          refresh_token: string | null
+          scope: string | null
+          session_state: string | null
+          token_type: string | null
+          type: string
+          userId: string | null
         }
         Insert: {
-          created_at?: string
-          github?: Json | null
-          id: string
-          invited_at?: string | null
+          access_token?: string | null
+          expires_at?: number | null
+          id?: string
+          id_token?: string | null
+          oauth_token?: string | null
+          oauth_token_secret?: string | null
+          provider: string
+          providerAccountId: string
+          refresh_token?: string | null
+          scope?: string | null
+          session_state?: string | null
+          token_type?: string | null
+          type: string
+          userId?: string | null
         }
         Update: {
-          created_at?: string
-          github?: Json | null
+          access_token?: string | null
+          expires_at?: number | null
           id?: string
-          invited_at?: string | null
+          id_token?: string | null
+          oauth_token?: string | null
+          oauth_token_secret?: string | null
+          provider?: string
+          providerAccountId?: string
+          refresh_token?: string | null
+          scope?: string | null
+          session_state?: string | null
+          token_type?: string | null
+          type?: string
+          userId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          expires: string
+          id: string
+          sessionToken: string
+          userId: string | null
+        }
+        Insert: {
+          expires: string
+          id?: string
+          sessionToken: string
+          userId?: string | null
+        }
+        Update: {
+          expires?: string
+          id?: string
+          sessionToken?: string
+          userId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          email: string | null
+          emailVerified: string | null
+          id: string
+          image: string | null
+          name: string | null
+        }
+        Insert: {
+          email?: string | null
+          emailVerified?: string | null
+          id?: string
+          image?: string | null
+          name?: string | null
+        }
+        Update: {
+          email?: string | null
+          emailVerified?: string | null
+          id?: string
+          image?: string | null
+          name?: string | null
+        }
+        Relationships: []
+      }
+      verification_tokens: {
+        Row: {
+          expires: string
+          identifier: string | null
+          token: string
+        }
+        Insert: {
+          expires: string
+          identifier?: string | null
+          token: string
+        }
+        Update: {
+          expires?: string
+          identifier?: string | null
+          token?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      uid: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  private: {
+    Tables: {
+      github_states: {
+        Row: {
+          id: string
+          state: string
+        }
+        Insert: {
+          id?: string
+          state?: string
+        }
+        Update: {
+          id?: string
+          state?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  public: {
+    Tables: {
+      github_connection: {
+        Row: {
+          avatar_url: string
+          display_name: string
+          github_id: string
+          id: string
+          username: string
+        }
+        Insert: {
+          avatar_url: string
+          display_name: string
+          github_id: string
+          id?: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string
+          display_name?: string
+          github_id?: string
+          id?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "github_connection_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          email: string | null
+          id: string
+          image: string | null
+          name: string | null
+        }
+        Insert: {
+          email?: string | null
+          id: string
+          image?: string | null
+          name?: string | null
+        }
+        Update: {
+          email?: string | null
+          id?: string
+          image?: string | null
+          name?: string | null
         }
         Relationships: []
       }

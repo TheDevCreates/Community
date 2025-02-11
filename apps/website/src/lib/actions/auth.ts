@@ -2,25 +2,22 @@
 
 import { cookies } from "next/headers";
 
-import { ExtendedUser } from "../types/user";
-
+import { auth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceServer } from "@/lib/supabase/service-server";
 
-export async function getAccountInformation(): Promise<ExtendedUser | false> {
+export async function getAccountInformation() {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  const _supabase = createServiceServer();
+  const supabase = createServiceServer();
 
-  const account = await supabase.auth.getUser();
-  if (!account.data.user) return false;
+  const session = await auth();
+  if (!session) return false;
 
-  const user = await _supabase
-    .from("users")
+  const { data: github } = await supabase
+    .from("github_connection")
     .select("*")
-    .eq("id", account.data.user.id)
+    .eq("id", session.user.id!)
     .single();
-  if (!user.data) return false;
 
-  return { account: account.data.user, user: user.data };
+  return { session, github };
 }

@@ -36,7 +36,7 @@ export default function Home() {
                   window: window,
                 });
               }}
-              disabled={user.data.user.github !== null}
+              disabled={user.data.github !== null}
             >
               <Github /> Connect to Github
             </Button>

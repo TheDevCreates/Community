@@ -1,14 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
-import type { MiddlewareSupabaseClient } from ".";
+import type { MiddlewareChild } from ".";
 
 export default async function authHandler(
   req: NextRequest,
   res: NextResponse,
-  supa_data: MiddlewareSupabaseClient
+  supa_data: MiddlewareChild
 ) {
-  const { user, account } = supa_data;
+  const { nextauth } = supa_data;
 
-  if (!user) {
+  if (!nextauth) {
     // rewrite to /home if "/" is requested
     if (req.nextUrl.pathname === "/") {
       const nextUrl = req.nextUrl.clone();
@@ -19,7 +19,6 @@ export default async function authHandler(
 
   // Restrict logged in users to access auth pages
   if (
-    user &&
     (req.nextUrl.pathname == "/auth" ||
       req.nextUrl.pathname.startsWith("/auth/")) &&
     !req.nextUrl.pathname.startsWith("/auth/popup/github") &&
@@ -30,16 +29,6 @@ export default async function authHandler(
       return NextResponse.next();
     }
 
-    const nextUrl = req.nextUrl.clone();
-    nextUrl.pathname = "/";
-    return NextResponse.redirect(nextUrl);
-  }
-
-  // Restrict logged in users that already have a Github connection
-  if (
-    account?.github &&
-    req.nextUrl.pathname.startsWith("/auth/popup/github")
-  ) {
     const nextUrl = req.nextUrl.clone();
     nextUrl.pathname = "/";
     return NextResponse.redirect(nextUrl);

@@ -3,6 +3,8 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import middleware from "@/lib/middleware";
 
+import { auth } from "@/lib/auth";
+
 export const createClient = async (request: NextRequest) => {
   // Create an unmodified response
   let supabaseResponse = NextResponse.next({
@@ -40,5 +42,9 @@ export const createClient = async (request: NextRequest) => {
     }
   );
 
-  return middleware(request, supabaseResponse, supabase);
+  // Next Auth
+
+  const nextauth = await auth();
+
+  return middleware(request, supabaseResponse, supabase, nextauth);
 };

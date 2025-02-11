@@ -3,6 +3,7 @@ import type {
   SupabaseClient,
   User as SupabaseUser,
 } from "@supabase/supabase-js";
+import type { Session as NextAuthSession } from "next-auth";
 import { type NextRequest, NextResponse } from "next/server";
 import User from "@devcreates/types/schema/public/users";
 
@@ -12,39 +13,34 @@ import { Database } from "@devcreates/types/database";
 
 const middlewares = [authHandler, bypassDevelopment];
 
-export interface MiddlewareSupabaseClient {
+export interface MiddlewareChild {
   supabase: SupabaseClient;
-  session: Session | null;
-  user: SupabaseUser | null;
   account: User | null;
+
+  nextauth: NextAuthSession | null;
 }
 
 export default async function middleware(
   req: NextRequest,
   res: NextResponse,
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient<Database>,
+  nextauth: NextAuthSession | null
 ) {
-  // fetch session
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  // fetch user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   // fetch account
-  const { data: account } = user
-    ? await supabase.from("users").select("*").eq("id", user.id).single()
+  const { data: account } = nextauth
+    ? await supabase
+        .from("users")
+        .select("*")
+        .eq("id", nextauth.user.id!)
+        .single()
     : { data: null };
 
   // Extend supabase with session and user
-  const data: MiddlewareSupabaseClient = {
+  const data: MiddlewareChild = {
     supabase,
-    session,
-    user,
     account,
+
+    nextauth,
   };
 
   // Load individuals middleware
@@ -59,7 +55,7 @@ export default async function middleware(
 async function bypassDevelopment(
   req: NextRequest,
   res: NextResponse,
-  supabase: MiddlewareSupabaseClient
+  supabase: MiddlewareChild
 ) {
   // Bypass /auth/popup if in development
   if (process.env.NODE_ENV === "development") {
