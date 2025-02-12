@@ -19,6 +19,7 @@ export default async function authHandler(
 
   // Restrict logged in users to access auth pages
   if (
+    nextauth &&
     (req.nextUrl.pathname == "/auth" ||
       req.nextUrl.pathname.startsWith("/auth/")) &&
     !req.nextUrl.pathname.startsWith("/auth/popup/github") &&
