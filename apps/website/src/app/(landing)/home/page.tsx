@@ -36,7 +36,7 @@ export default function Home() {
             DevCreates Community
           </CardTitle>
           <CardDescription className="text-center text-sm md:text-sm">
-            A GitHub community for developers to work together on projects.
+            A GitHub community where developers can collaborate on projects.
           </CardDescription>
         </CardHeader>
         <CardContent className="mt-2 flex flex-col items-center">
