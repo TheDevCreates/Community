@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Redirect to the success page
-  nextUrl.pathname = "/auth/popup/success";
+  nextUrl.pathname = "/auth/popup/github/success";
 
   return NextResponse.redirect(nextUrl);
 }

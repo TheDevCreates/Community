@@ -37,12 +37,12 @@ export default function Home() {
           className="size-8 md:size-10"
         />
         <p className="md:text-lg font-medium">DevCreates</p>
-        <Separator className="w-[2px] h-[1rem]" orientation="vertical" />
         {user.data?.session.user.image ? (
           <>
+            <Separator className="w-[2px] h-[1rem]" orientation="vertical" />
             <Image
               src={user.data?.session.user.image}
-              alt="User Avatar"
+              alt="Discord User Avatar"
               width={28}
               height={28}
               className="rounded-full"
@@ -53,6 +53,7 @@ export default function Home() {
           </>
         ) : (
           <>
+            <Separator className="w-[2px] h-[1rem]" orientation="vertical" />
             <Skeleton className="size-7 rounded-full" />
             <Skeleton className="h-5 w-20 rounded-full" />
           </>
@@ -61,50 +62,16 @@ export default function Home() {
       <Card className="mx-4">
         <CardHeader>
           <CardTitle className="flex text-xl justify-center">
-            DevCreates Community
+            Github has been Verified!
           </CardTitle>
           <CardDescription className="text-center text-sm md:text-sm">
-            A GitHub community where developers can collaborate on projects.
+            Please check your email and join the Github organization.
           </CardDescription>
         </CardHeader>
-        <CardContent className="mt-2 flex gap-2 flex-col items-center">
-          <Button
-            onClick={() => {
-              popupCenter({
-                url: `/auth/popup/github`,
-                title: "Github Auth",
-                w: 500,
-                h: 600,
-                window: window,
-              });
-            }}
-            className="w-full relative"
-            disabled={!(user.data?.session && !user.data?.github)}
-          >
-            <SiGithub fill={SiGithubHex} />
-            Login with Github
-            {user.data?.github && <Check className="absolute right-2" />}
+        <CardContent className="flex gap-2 flex-col items-center">
+          <Button onClick={() => window.close()} className="w-full relative">
+            Close Window
           </Button>
-          <div className="grid gap-2 grid-cols-2 w-full">
-            <Link
-              href="https://github.com/TheDevCreates-Public"
-              target="_blank"
-              className={cn(buttonVariants({ variant: "secondary" }), "w-full")}
-            >
-              <SquareArrowOutUpRight />
-              Github Organization
-            </Link>
-            <Link
-              href="/auth/logout"
-              className={cn(
-                buttonVariants({ variant: "destructive" }),
-                "w-full"
-              )}
-            >
-              <LogOut />
-              Logout
-            </Link>
-          </div>
         </CardContent>
       </Card>
     </main>

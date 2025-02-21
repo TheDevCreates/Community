@@ -1,5 +1,11 @@
+"use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
+import { getAccountInformation } from "@/lib/actions/auth";
+
+import { SiDiscord, SiDiscordHex } from "@icons-pack/react-simple-icons";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,15 +15,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { SiDiscord, SiDiscordHex } from "@icons-pack/react-simple-icons";
+
+import { popupCenter } from "@/lib/utils";
 
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    window.addEventListener("focus", async (e) => {
+      e.preventDefault();
+
+      router.refresh();
+    });
+
+    getAccountInformation().then((data) => {
+      if (data.valueOf() === Object) router.replace("/");
+      setIsLoggedIn(true);
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 [div>transition]">
       <div className="flex gap-3 justify-center items-center">
@@ -40,21 +60,26 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent className="mt-2 flex flex-col items-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span tabIndex={0} className="w-full">
-                  <Button disabled className="w-full">
-                    <SiDiscord fill={SiDiscordHex} />
-                    Login with Discord
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent className="text-medium text-black text-sm">
-                <p>🏗️🚧 Coming Soon! 🚧🚧</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+
+              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+              isLoggedIn
+                ? router.replace("/")
+                : popupCenter({
+                    url: `/auth/popup/discord`,
+                    title: "Discord Auth",
+                    w: 500,
+                    h: 600,
+                    window: window,
+                  });
+            }}
+            className="w-full"
+          >
+            <SiDiscord fill={SiDiscordHex} />
+            Login with Discord
+          </Button>
         </CardContent>
       </Card>
     </main>
