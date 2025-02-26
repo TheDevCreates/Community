@@ -11,39 +11,6 @@ import { createServiceServer } from "@/lib/supabase/service-server";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
-  // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get("next") ?? "/auth/popup/success";
-
-  if (!code)
-    return Response.json({ success: false, message: "Code not found" });
-
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  const session = await supabase.auth.exchangeCodeForSession(code);
-
-  if (session.error)
-    return Response.json({
-      success: false,
-      message: session.error,
-      type: "session",
-    });
-
-  // debug
-  if (process.env.NODE_ENV === "development") {
-    const { data: session_data } = await supabase.auth.getSession();
-    console.log(
-      "New user logged in!\nToken: ",
-      session_data.session?.provider_token,
-      "\nRefresh Token: ",
-      session_data.session?.refresh_token,
-      "\n"
-    );
-  }
-
-  await createDatabaseAccount(session.data);
-
   // # DevCreates & DC Community haven't done inviting the bot to the server yet
   // try {
   //   const discordClient = new Client(process.env.DISCORD_TOKEN!);
@@ -56,26 +23,6 @@ export async function GET(request: Request) {
   // } catch (e) {}
 
   return Response.redirect(
-    `${process.env.ORIGIN_URL ?? "http://localhost:3000"}${next}`
+    `${process.env.ORIGIN_URL ?? "http://localhost:3000"}`
   );
-}
-
-async function createDatabaseAccount(session: AuthTokenResponse["data"]) {
-  const supabase = createServiceServer();
-
-  const { data: user } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", session.user!.id)
-    .single();
-
-  if (user) return;
-
-  console.log("Creating new user in database");
-
-  await supabase.from("users").insert([
-    {
-      id: session.user!.id,
-    },
-  ]);
 }
