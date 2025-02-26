@@ -3,7 +3,6 @@
 import { cookies } from "next/headers";
 
 import { auth } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
 import { createServiceServer } from "@/lib/supabase/service-server";
 
 export async function getAccountInformation() {

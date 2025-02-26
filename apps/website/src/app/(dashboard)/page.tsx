@@ -18,6 +18,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { signOut } from "next-auth/react";
 import { cn, popupCenter } from "@/lib/utils";
 import Link from "next/link";
 
@@ -94,16 +95,14 @@ export default function Home() {
               <SquareArrowOutUpRight />
               Github Organization
             </Link>
-            <Link
-              href="/auth/logout"
-              className={cn(
-                buttonVariants({ variant: "destructive" }),
-                "w-full"
-              )}
+            <Button
+              onClick={() => signOut()}
+              variant="destructive"
+              className={cn("w-full")}
             >
               <LogOut />
               Logout
-            </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
