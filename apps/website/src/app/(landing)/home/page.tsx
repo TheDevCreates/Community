@@ -31,8 +31,10 @@ export default function Home() {
     });
 
     getAccountInformation().then((data) => {
-      if (data.valueOf() === Object) router.replace("/");
-      setIsLoggedIn(true);
+      if (data.valueOf() === Object) {
+        router.replace("/");
+        setIsLoggedIn(true);
+      }
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
